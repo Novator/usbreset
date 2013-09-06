@@ -1,22 +1,16 @@
 #!/bin/sh
 
-## The popular git commands using for maintenance Pandora project at GitHub
-## Uncomment necessary line, comment out unnecessary, and run the script.
-## RU: Популярные команды git, используемые для сопровождения Пандоры на Гитхабе
-## RU: Раскомментируй нужные строки, закомментируй ненужные, и запусти скрипт.
-
 ## 2012(c) Michael Galyuk, Pandora, freeware
-## WARNING! Rename your script, else it will be rewritten at next synchronization.
 
 ## Init git on your computer
 ## (Change name and email!)
-git config --global user.name "Michael Galyuk"
-git config --global user.email ironsoft@mail.ru
-git config --global color.ui true
-git config --global core.autocrlf false
-git config --global core.safecrlf true
-git config --global credential.helper cache
-git config credential.helper 'cache --timeout=3600'
+#git config --global user.name "Michael Galyuk"
+#git config --global user.email ironsoft@mail.ru
+#git config --global color.ui true
+#git config --global core.autocrlf false
+#git config --global core.safecrlf true
+#git config --global credential.helper cache
+#git config credential.helper 'cache --timeout=3600'
 
 ## Start new repository
 #git init
@@ -34,7 +28,7 @@ git config credential.helper 'cache --timeout=3600'
 
 ## Push files from local to repository
 git add --all
-git commit -a -m "first commit"
+git commit -a -m "just a commit"
 git push -u origin master
 
 ##Modify last commit
