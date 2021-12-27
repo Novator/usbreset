@@ -4,12 +4,14 @@
 #Example of using:
 #resetmodem.sh -s -1
 
-CN='Megafon RUS'   #название соединения в NetworkManager'е
+#CN='Megafon RUS'   #название соединения в NetworkManager'е
+CN='Tele2'   #название соединения в NetworkManager'е
 MM="Modem"  #маркер модема, можно заменить на "Huawei" или подобное из команды lsusb
 EP=2        #число ошибочных пингов из 5
-CS=1        #параметр -s CS, число общих повторов (CS=-1 - бесконечно)
+CS=-1        #параметр -s CS, число общих повторов (CS=-1 - бесконечно)
 PL=25       #макс. длит. пинга
-PA="google.ru"    #пингуемый адрес
+#PA="google.ru"    #пингуемый адрес
+PA="yandex.ru"    #пингуемый адрес
 
 ps -few | grep "resetmodem.sh"
 RC=`ps -few | grep "resetmodem.sh" | wc -l`
@@ -40,7 +42,7 @@ if [ "$M" != "" ]; then   #если модем выбран, можно пров
   echo "Делаем пинги до $PA..."
   BP=0
   for i in {1..5}; do #делаем 5 пингов до сервера
-    timeout -k 2 -s TERM $(($PL+2)) ping -w $PL -s 8 -c 1 $PA
+    timeout -k 5 -s TERM $(($PL+2)) ping -w $PL -s 8 -c 1 $PA
     Err=$?
     if [ $Err != 0 ]; then
       BP=$(($BP+1))
@@ -49,7 +51,7 @@ if [ "$M" != "" ]; then   #если модем выбран, можно пров
         break
       fi
     else
-      sleep 2
+      sleep 7
     fi
   done
   echo "потерь пакетов: $BP из $i"
@@ -70,19 +72,27 @@ if [ "$M" != "" ]; then   #если модем выбран, можно пров
     nmcli con down id "$CN"
     F="/dev/bus/usb/$B/$D"
     echo "полный путь:$F"
-    /mnt/data/Personal/C/usbreset/usbreset $F   #сброс usb-устройства (3G модема)!
-    /etc/init.d/network-manager restart
+    /etc/init.d/network-manager stop
+    #sleep 1
+    ./usbreset $F   #сброс usb-устройства (3G модема)!
+    sleep 2
+    /etc/init.d/network-manager start
 
-    sleep 1
-    nmcli con down id "$CN"
-    sleep 6
+    #sleep 1
+    #nmcli con down id "$CN"
+    sleep 13
     for i in {1..5}; do     #делаем 5 попыток поднять соединение
       echo "попытка соединения:"$i
-      sleep 3
-      timeout -k 5 -s TERM 15 nmcli con up id "$CN"
-      nmcli con status id "$CN"
-      Err=$?
-      if [ $Err == 0 ]; then
+      sleep 7
+      timeout -k 15 -s TERM 15 nmcli con up id "$CN"
+      #nmcli con status id "$CN"
+      #Err=$?
+      #if [ $Err == 0 ]; then
+      #CM=`nmcli con | grep -i tty`
+      CM=`nmcli con show --active | grep -i tty`
+      #CM=`nmcli con show --active | grep -i tty | wc -l'
+      #if [ $Err != 0 ]; then
+      if [ "$CM" != "" ]; then   #если модем выбран, можно проверять пинги
         echo "Соединение установлено."
         sleep 2
         break
